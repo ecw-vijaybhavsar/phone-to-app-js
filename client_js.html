@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="C:/Users/vijay.bhavsar/app-to-phone-js/node_modules/nexmo-client/dist/nexmoClient.js"></script>
+</head>
+<body>
+
+  <h1>Inbound PSTN phone call</h1>
+  <p id="notification">Lines are open for calls...</p>
+  <br />
+  <button type="button" id="answer">Answer</button>
+  <button type="button" id="reject">Reject</button>
+  <button type="button" id="hangup">Hang Up</button>
+  <script>
+
+    new NexmoClient({ debug: true })
+    .createSession("eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2ODY5MjYzMzYsImV4cCI6MTY4NzAxMjczNiwianRpIjoiN3JKWnJFUWRnMTFmIiwiYXBwbGljYXRpb25faWQiOiI1Njk3MGQzNi04MTgzLTQ1ZjEtYWJlMC1jNWMxMmNkMmZkZWQiLCJzdWIiOiJBbGljZSIsImFjbCI6IiJ9.T9vDQWI3-OkB4JFz3ONgyv-GNPAxf0WOJGLQvckM5QPj4gwI2i-isz1iq1KRCWqQWiAeA8SaPNXbIAz_UCEB-84XMoJLxGUCHRWG-_Ncfi2j-NYZlLeY2IIbaHKQg2rW4fppy1Ss6nAqOuUCXPWp4hzwg9Hn9HElFsz01HYYqdMKOTVcmqb2E7YZUNrlLEmEjLabY1SIJw-xupj9KbfTAnzuK5GMb3Fj2Bv8E2LEQdPXd-0TD1PCCalSkmsF_UenK7dYu7aPdsW8agpyw-LVcsC-UgZU2i2qLBlU0Yrivly17qiRtXYRre6D_HXlkG56yrJwVQW0-j03fg3Smc9Xng")
+    .then(app => {
+
+        const answerBtn = document.getElementById("answer");
+        const rejectBtn = document.getElementById("reject");
+        const hangupBtn = document.getElementById("hangup");
+        const notification = document.getElementById("notification");
+
+        app.on("member:call", (member, call) => {
+            notification.textContent = "You are receiving a call";
+            // Answer the call.
+            answerBtn.addEventListener("click", () => {
+                call.answer();
+                notification.textContent = "You are in a call";
+            });
+            // Reject the call
+            rejectBtn.addEventListener("click", () => {
+                call.reject();
+                notification.textContent = `You rejected the call`;
+            });
+            // Hang-up the call
+            hangupBtn.addEventListener("click", () => {
+                call.hangUp();
+                notification.textContent = `You ended the call`;
+            });
+        });
+
+        app.on("call:status:changed", (call) => {
+          notification.textContent = "Call Status: " + call.status;
+        });
+    })
+    .catch((error) => {
+        console.error(error);
+    });
+  </script>
+</body>
+</html>

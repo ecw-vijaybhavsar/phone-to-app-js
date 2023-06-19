@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="C:/Users/vijay.bhavsar/app-to-phone-js/node_modules/nexmo-client/dist/nexmoClient.js"></script>
+</head>
+<body>
+
+  <h1>Inbound PSTN phone call</h1>
+  <p id="notification">Lines are open for calls...</p>
+  <br />
+  <button type="button" id="answer">Answer</button>
+  <button type="button" id="reject">Reject</button>
+  <button type="button" id="hangup">Hang Up</button>
+  <script>
+
+    new NexmoClient({ debug: true })
+    .createSession("eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2ODY5MTI4NDgsImV4cCI6MTY4Njk5OTI0OCwianRpIjoienl2SklZUnRKZkx4IiwiYXBwbGljYXRpb25faWQiOiI1Njk3MGQzNi04MTgzLTQ1ZjEtYWJlMC1jNWMxMmNkMmZkZWQiLCJzdWIiOiJWaWpheSIsImFjbCI6eyJwYXRocyI6eyIvKi91c2Vycy8qKiI6e30sIi8qL2NvbnZlcnNhdGlvbnMvKioiOnt9LCIvKi9zZXNzaW9ucy8qKiI6e30sIi8qL2RldmljZXMvKioiOnt9LCIvKi9pbWFnZS8qKiI6e30sIi8qL21lZGlhLyoqIjp7fSwiLyovYXBwbGljYXRpb25zLyoqIjp7fSwiLyovcHVzaC8qKiI6e30sIi8qL2tub2NraW5nLyoqIjp7fSwiLyovbGVncy8qKiI6e319fX0.ZC0SjczqRGzT3sz_HrIGIF1TN3yrhaW9YUNq-hgeMcNSGl1ZzjR6hZ1SS6_Rrz9BQ9A2efhjFB9Zxc8HzHNNNuoLiNoD1MA_OUJ0Y3DzWMGmBIlPlQgA8f1w4rSa1E7NVOSnCPFYg5bIU1J6yUQW6Tb610_1b9C2hT5PAn-JnPolUk4WyW_EK-JeoU7CEezx-YvLOpd8Rn7E0m_Hlckx0Ba4oB84LGDZle-jloVloGksVqKt7mdfOHPUYuRhXr4HKJoE7c3M8dRkCO5CciDwZR9BPXKi6MkLBr13O1jsnXU09w9GMq8vb7Fi3TSk1xMQweBK9TesSCkZRqtK_q4ZHQ")
+    .then(app => {
+
+        const answerBtn = document.getElementById("answer");
+        const rejectBtn = document.getElementById("reject");
+        const hangupBtn = document.getElementById("hangup");
+        const notification = document.getElementById("notification");
+
+        app.on("member:call", (member, call) => {
+            notification.textContent = "You are receiving a call";
+            // Answer the call.
+            answerBtn.addEventListener("click", () => {
+                call.answer();
+                notification.textContent = "You are in a call";
+            });
+            // Reject the call
+            rejectBtn.addEventListener("click", () => {
+                call.reject();
+                notification.textContent = `You rejected the call`;
+            });
+            // Hang-up the call
+            hangupBtn.addEventListener("click", () => {
+                call.hangUp();
+                notification.textContent = `You ended the call`;
+            });
+        });
+
+        app.on("call:status:changed", (call) => {
+          notification.textContent = "Call Status: " + call.status;
+        });
+    })
+    .catch((error) => {
+        console.error(error);
+    });
+  </script>
+</body>
+</html>
